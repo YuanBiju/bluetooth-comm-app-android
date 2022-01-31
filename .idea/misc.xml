@@ -3,8 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/yuann/Projects/AndroidStudio/BTTest/app/src/main/res/layout/activity_main.xml" value="0.2" />
+        <entry key="..\:/yuann/Projects/AndroidStudio/BTTest/app/src/main/res/layout-land/activity_main.xml" value="0.16666666666666666" />
+        <entry key="..\:/yuann/Projects/AndroidStudio/BTTest/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/yuann/Projects/AndroidStudio/BTTest/app/src/main/res/layout/device_info_layout.xml" value="0.17708333333333334" />
+        <entry key="..\:/yuann/Projects/AndroidStudio/BTTest/app/src/main/res/layout/layout.xml" value="0.1" />
         <entry key="..\:/yuann/Projects/AndroidStudio/BTTest/app/src/main/res/layout/select_device_activity.xml" value="0.14666666666666667" />
       </map>
     </option>

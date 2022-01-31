@@ -5,6 +5,7 @@ import static android.content.ContentValues.TAG;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -14,6 +15,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private final static int MESSAGE_READ = 2; // used in bluetooth handler to identify message update
 
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,8 +47,23 @@ public class MainActivity extends AppCompatActivity {
 
         final Button buttonConnect = findViewById(R.id.buttonConnect);
         final Button buttonToggle = findViewById(R.id.buttonToggle);
+        // Forward,Reverse,Right,Left and Stop Command buttons
+        final Button buttonForward = findViewById(R.id.buttonForward);
+        final Button buttonReverse = findViewById(R.id.buttonReverse);
+        final Button buttonRight = findViewById(R.id.buttonRight);
+        final Button buttonLeft = findViewById(R.id.buttonLeft);
+        final Button buttonStop = findViewById(R.id.buttonStop);
+
         final Slider continuousSlider = findViewById(R.id.continuousSlider);
+
+        // Disable all control buttons unless connected to the BT module
         buttonToggle.setEnabled(false);
+        buttonForward.setEnabled(false);
+        buttonReverse.setEnabled(false);
+        buttonRight.setEnabled(false);
+        buttonLeft.setEnabled(false);
+        buttonStop.setEnabled(false);
+        continuousSlider.setEnabled(false);
 
         deviceName = getIntent().getStringExtra("deviceName");
         if(deviceName != null){
@@ -69,6 +87,12 @@ public class MainActivity extends AppCompatActivity {
                             case 1:
                                 buttonConnect.setEnabled(true);
                                 buttonToggle.setEnabled(true);
+                                buttonForward.setEnabled(true);
+                                buttonReverse.setEnabled(true);
+                                buttonRight.setEnabled(true);
+                                buttonLeft.setEnabled(true);
+                                buttonStop.setEnabled(true);
+                                continuousSlider.setEnabled(true);
                                 break;
                             case -1:
                                 buttonConnect.setEnabled(true);
@@ -98,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        // Button to ON/OFF LED on Arduino Board
+        // Button to ON/OFF RC car
         buttonToggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -107,17 +131,72 @@ public class MainActivity extends AppCompatActivity {
                 switch (btnState){
                     case "turn on":
                         buttonToggle.setText("Turn Off");
-                        // Command to turn on LED on Arduino. Must match with the command in Arduino code
-                        cmdText = "on";
+                        // Command to turn on car. Must match with the command in Arduino code
+                        cmdText = "01on"+"\n";
                         break;
                     case "turn off":
                         buttonToggle.setText("Turn On");
-                        // Command to turn off LED on Arduino. Must match with the command in Arduino code
-                        cmdText = "off";
+                        // Command to turn off car. Must match with the command in Arduino code
+                        cmdText = "01off"+"\n";
                         break;
                 }
                 // Send command to Arduino board
-                //connectedThread.write(cmdText);
+                connectedThread.write(cmdText);
+            }
+        });
+        // Go Forward
+        buttonForward.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                String cmdText = null;
+                cmdText = "02F"+"\n";
+                // Send command to Arduino board
+                connectedThread.write(cmdText);
+                return false;
+            }
+        });
+        // Go Reverse
+        buttonReverse.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                String cmdText = null;
+                cmdText = "02B"+"\n";
+                // Send command to Arduino board
+                connectedThread.write(cmdText);
+                return false;
+            }
+        });
+        // Take Right
+        buttonRight.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                String cmdText = null;
+                cmdText = "02R"+"\n";
+                // Send command to Arduino board
+                connectedThread.write(cmdText);
+                return false;
+            }
+        });
+        // Take Left
+        buttonLeft.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                String cmdText = null;
+                cmdText = "02L"+"\n";
+                // Send command to Arduino board
+                connectedThread.write(cmdText);
+                return false;
+            }
+        });
+        // Stop
+        buttonStop.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                String cmdText = null;
+                cmdText = "02S"+"\n";
+                // Send command to Arduino board
+                connectedThread.write(cmdText);
+                return false;
             }
         });
         //Slider to control the PWM value
@@ -125,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
                 String cmdText = null;
-                cmdText = Float.toString(value)+"\n";
+                cmdText = "04"+Float.toString(value)+"\n";
                 // Send command to Arduino board
                 connectedThread.write(cmdText);
             }
